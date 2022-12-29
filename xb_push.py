@@ -3,13 +3,18 @@
 cron: */15 * * * * *
 定时默认15秒 不建议低于10秒 会被封IP
 如需晚上不推送 可以设置为 */15 * 8-23 * * *
+注：黑名单优先级大于白名单 即同时满足黑名单和白名单的情况下 会被判定为黑名单
 new Env('线报推送');
 """
 
-import os, requests
+import os
+import requests
 
-# 关键词类别 可自行修改
-key = ["电费", "抗原", "清瘟", "9.9-8.9", "0.01", "N95", "白菜", "漏洞", "BUG", "bug", "福利", "神价", "好价", "话费", "赶紧", "返现", "高反", "洞", "建行生活", "外卖", "云闪付", "立减", "速度"]
+# 推送关键词 可自行修改
+key = ["023", "重庆", "电费", "抗原", "9.9-8.9", "0.01", "N95", "n95", "漏洞", "BUG", "bug", "神价", "话费", "赶紧",
+       "返现", "高反", "洞", "饿了么", "云闪付", "立减", "速度"]
+# 黑名单关键词 可自行修改
+black_key = ["kn95", "KN95", "Kn95", "怎么", "求", "了吗", "了没", "是不是", "有没", "能不能", "如何", "哪些", "哪里", "什么"]
 # Bark推送Key
 Bark_Key = ""
 # Bark推送声音
@@ -55,19 +60,34 @@ def get_new_xb():
             print("第" + str(a) + "条线报：" + ID + "已推送过")
             print("检测到已推送过的线报，结束本次检测")
             break
-        # 判断线报标题是否包含关键字
+
+        # 判断是否包含黑名单关键词
+        for k in black_key:
+            if k in title or k in content:
+                title = "黑名单关键词[" + k + "]"
+                break
+
+        b = 0
+        # 判断线报标题和内容是否包含关键字
         for j in key:
+            if "黑名单关键词[" in title:
+                print("第" + str(a) + "条线报：" + "标题或内容包含" + title)
+                b = 1
+                break
             if j in title:
                 print("第" + str(a) + "条线报：" + "标题包含关键字：" + j)
                 title = "[标题][" + j + "]" + title
                 bark(title, content, xb_url)
+                b = 1
                 break
             elif j in content:
                 print("第" + str(a) + "条线报：" + "内容包含关键字：" + j)
                 title = "[内容][" + j + "]" + title
                 bark(title, content, xb_url)
+                b = 1
                 break
-        print("第" + str(a) + "条线报：" + "未匹配到关键字")
+        if b == 0:
+            print("第" + str(a) + "条线报：" + "未匹配到关键字")
     # 写入缓存ID
     with open("./xb_push.log", "w") as f:
         f.write(cache_ID)
@@ -79,15 +99,15 @@ def bark(title, content, push_url):
         "sound": Bark_sound,
         "url": push_url
     }
-
+    if len(url) > 300:
+        url = "https://api.day.app/" + Bark_Key + "/" + title + "/线报内容过长，请进入查看。"
     data = requests.post(url=url, params=params).json()
-
     if data['code'] == 200:
         print("推送成功")
     elif data['code'] == 400:
         print("推送失败")
     else:
-        print("未知错误")
+        print("未知错误,状态码：" + str(data['code']))
 
 
 if __name__ == '__main__':
