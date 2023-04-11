@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 cron: */30 * * * * *
+更新时间：2023-4-11 17:30:12
 定时默认30秒 不建议低于10秒 会被封IP
 如需晚上不推送 可以设置为 */15 * 8-23 * * *
 注：黑名单优先级大于白名单 即同时满足黑名单和白名单的情况下 会被判定为黑名单
@@ -52,7 +53,7 @@ def get_new_xb():
         title = title.replace("/", "\\")  # 替换标题中的斜杠 防止Bark推送失败
         content = i['content']  # 获取线报内容
         content = content.replace("/", "\\")  # 替换内容中的斜杠 防止Bark推送失败
-        xb_url = "https://v1.xianbao.fun" + i['url']  # 获取线报URL
+        xb_url = "https://new.xianbao.fun" + i['url']  # 获取线报URL
         ID = i['url']  # 获取线报ID
 
         a += 1
