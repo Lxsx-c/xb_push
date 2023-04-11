@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-cron: */15 * * * * *
-定时默认15秒 不建议低于10秒 会被封IP
+cron: */30 * * * * *
+定时默认30秒 不建议低于10秒 会被封IP
 如需晚上不推送 可以设置为 */15 * 8-23 * * *
 注：黑名单优先级大于白名单 即同时满足黑名单和白名单的情况下 会被判定为黑名单
 new Env('线报推送');
@@ -38,7 +38,8 @@ def read_log():
 
 
 def get_new_xb():
-    url = 'https://v1.xianbao.fun/plus/json/push.txt'
+    # url = 'https://v1.xianbao.fun/plus/json/push.txt'
+    url = 'http://new.xianbao.fun/plus/json/push.txt'
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
     }
