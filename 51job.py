@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+cron: 0 */1 * * *
+更新时间：2023-4-11 17:30:12
+默认一小时跑一次 如果一天只跑一次可能有的任务会跑不完
+new Env('前程无忧金币');
+"""
 
 import requests
 import urllib.parse
